@@ -9,52 +9,185 @@
       :disabled="disabled"
     >
       <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item label="入库单号" prop="no">
-            <el-input disabled v-model="formData.no" placeholder="保存时自动生成" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="入库时间" prop="inTime">
+        <el-col :span="5">
+          <el-form-item label="收购时间" prop="purchaseTime">
             <el-date-picker
-              v-model="formData.inTime"
+              v-model="formData.purchaseTime"
               type="date"
               value-format="x"
-              placeholder="选择入库时间"
+              placeholder="选择收购时间"
               class="!w-1/1"
             />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-          <el-form-item label="关联订单" prop="orderNo">
-            <el-input v-model="formData.orderNo" readonly>
-              <template #append>
-                <el-button @click="openPurchaseOrderInEnableList">
-                  <Icon icon="ep:search" /> 选择
-                </el-button>
-              </template>
-            </el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="供应商" prop="supplierId">
+        <el-col :span="5">
+          <el-form-item label="售粮人姓名" prop="sellerName">
             <el-select
-              v-model="formData.supplierId"
+              v-model="formData.sellerName"
               clearable
               filterable
-              disabled
-              placeholder="请选择供应商"
+              placeholder="请选择客户"
               class="!w-1/1"
             >
               <el-option
                 v-for="item in supplierList"
-                :key="item.id"
+                :key="item.name"
                 :label="item.name"
-                :value="item.id"
+                :value="item.name"
               />
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col :span="5">
+                  <el-form-item label="粮食品种" prop="grainType">
+                    <el-select
+                      v-model="formData.grainType"
+                      placeholder="请选择粮食品种"
+                      class="!w-1/1"
+                    >
+                      <el-option label="普杂" value="1"/>
+                      <el-option label="泰优398" value="2"/>
+                      <el-option label="天龙" value="3"/>
+                      <el-option label="野香优莉丝" value="4"/>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                   <el-col :span="5">
+                      <el-form-item label="季节" prop="season">
+                      <el-select
+                      v-model="formData.season"
+                      placeholder="请选择水稻季节"
+                      class="!w-1/1">
+                      <el-option label="早稻" value="1"/>
+                      <el-option label="中稻" value="2"/>
+                      <el-option label="晚稻" value="3"/>
+                      </el-select>
+                      </el-form-item>
+                   </el-col>
+                   <el-col :span="5">
+                     <el-form-item label="稻谷状态" prop="grainStatus">
+                     <el-select
+                     v-model="formData.grainStatus"
+                     placeholder="请选择稻谷状态"
+                     class="!w-1/1">
+                     <el-option label="湿稻谷" value="1"/>
+                     <el-option label="干稻谷" value="2"/>
+                     </el-select>
+                     </el-form-item>
+                </el-col>
+
+<el-col :span="5">
+          <el-form-item label="车牌号" prop="plateNo">
+            <el-select
+              v-model="formData.plateNo"
+              clearable
+              filterable
+              placeholder="请选择车牌号"
+              class="!w-1/1"
+            >
+              <el-option
+                v-for="item in plateList"
+                :key="item.licPlateNumber"
+                :label="item.licPlateNumber"
+                :value="item.licPlateNumber"
+              />
+            </el-select>
+          </el-form-item>
+          </el-col>
+          <el-col :span="5">
+                            <el-form-item label="毛重（KG）" prop="grossWeight">
+                              <el-input
+                                type="text"
+                                v-model="formData.grossWeight"
+                                class="!w-1/1"
+                                placeholder="请输入重量"
+                              />
+                            </el-form-item>
+                          </el-col>
+          <el-col :span="5">
+           <el-form-item label="皮重（KG）" prop="tareWeight">
+                                        <el-input
+                                          type="text"
+                                          v-model="formData.tareWeight"
+                                          class="!w-1/1"
+                                          placeholder="请输入重量"
+                                          @input="calcNet"
+                                        />
+                                      </el-form-item>
+                                    </el-col>
+           <el-col :span="5">
+           <el-form-item label="净重（KG）" prop="netWeight">
+                                                   <el-input
+                                                   disabled
+                                                     type="text"
+                                                     v-model="formData.netWeight"
+                                                     class="!w-1/1"
+                                                     placeholder="请输入重量"
+                                                     @input="calcNet"
+                                                   />
+                                                 </el-form-item>
+                                               </el-col>
+
+        <el-col :span="5">
+                       <el-form-item label="水分" prop="moisture">
+                       <el-input
+                       type="text"
+                       v-model="formData.moisture"
+                       class="!w-1/1"
+                       placeholder="水分"
+                       @input="calcAmount"
+                       />
+                       </el-form-item>
+          </el-col>
+           <el-col :span="5">
+                                 <el-form-item label="重金属值" prop="heavyMetal">
+                                 <el-input
+                                 type="text"
+                                 v-model="formData.heavyMetal"
+                                 class="!w-1/1"
+                                 placeholder="重金属值"
+                                 />
+                                 </el-form-item>
+                    </el-col>
+           <el-col :span="5">
+            <el-form-item label="扣杂" prop="deduction">
+            <el-input
+            type="text"
+            v-model="formData.deduction"
+            class="!w-1/1"
+            placeholder="扣杂"
+             @input="calcAmount"/>
+            </el-form-item>
+            </el-col>
+            <el-col :span="5">
+                <el-form-item label="结算单价" prop="unitPrice">
+                <el-input
+                type="text"
+                v-model="formData.unitPrice"
+                class="!w-1/1"
+                placeholder="请输入结算单价"
+                 @input="calcAmount"/>
+                </el-form-item>
+              </el-col>
+               <el-col :span="5">
+                  <el-form-item label="金额" prop="amount">
+                  <el-input
+                  type="text"
+                  v-model="formData.amount"
+                  class="!w-1/1"
+                  placeholder="请输入金额"
+                   @input="calcAmount"/>
+                  </el-form-item>
+                </el-col>
+                 <el-col :span="5">
+                                  <el-form-item label="卸车人" prop="unloader">
+                                  <el-input
+                                  type="text"
+                                  v-model="formData.unloader"
+                                  class="!w-1/1"
+                                  placeholder="请输入卸车人"/>
+                                  </el-form-item>
+                                </el-col>
         <el-col :span="16">
           <el-form-item label="备注" prop="remark">
             <el-input
@@ -63,86 +196,6 @@
               :rows="1"
               placeholder="请输入备注"
             />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="附件" prop="fileUrl">
-            <UploadFile :is-show-tip="false" v-model="formData.fileUrl" :limit="1" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!-- 子表的表单 -->
-      <ContentWrap>
-        <el-tabs v-model="subTabsName" class="-mt-15px -mb-10px">
-          <el-tab-pane label="入库产品清单" name="item">
-            <PurchaseInItemForm ref="itemFormRef" :items="formData.items" :disabled="disabled" />
-          </el-tab-pane>
-        </el-tabs>
-      </ContentWrap>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item label="优惠率（%）" prop="discountPercent">
-            <el-input-number
-              v-model="formData.discountPercent"
-              controls-position="right"
-              :min="0"
-              :precision="2"
-              placeholder="请输入优惠率"
-              class="!w-1/1"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="付款优惠" prop="discountPrice">
-            <el-input
-              disabled
-              v-model="formData.discountPrice"
-              :formatter="erpPriceInputFormatter"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="优惠后金额">
-            <el-input
-              disabled
-              :model-value="formData.totalPrice - formData.otherPrice"
-              :formatter="erpPriceInputFormatter"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="其它费用" prop="otherPrice">
-            <el-input-number
-              v-model="formData.otherPrice"
-              controls-position="right"
-              :min="0"
-              :precision="2"
-              placeholder="请输入其它费用"
-              class="!w-1/1"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="结算账户" prop="accountId">
-            <el-select
-              v-model="formData.accountId"
-              clearable
-              filterable
-              placeholder="请选择结算账户"
-              class="!w-1/1"
-            >
-              <el-option
-                v-for="item in accountList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="应付金额">
-            <el-input disabled v-model="formData.totalPrice" :formatter="erpPriceInputFormatter" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -155,11 +208,6 @@
     </template>
   </Dialog>
 
-  <!-- 可入库的订单列表 -->
-  <PurchaseOrderInEnableList
-    ref="purchaseOrderInEnableListRef"
-    @success="handlePurchaseOrderChange"
-  />
 </template>
 <script setup lang="ts">
 import { PurchaseInApi, PurchaseInVO } from '@/api/erp/purchase/in'
@@ -170,8 +218,9 @@ import PurchaseOrderInEnableList from '@/views/erp/purchase/order/components/Pur
 import { PurchaseOrderVO } from '@/api/erp/purchase/order'
 import * as UserApi from '@/api/system/user'
 import { SupplierApi, SupplierVO } from '@/api/erp/purchase/supplier'
+import { VehicleApi, VehicleVO } from '@/api/erp/purchase/vehicle'
 
-/** ERP 销售入库表单 */
+/** ERP 湿稻谷入库表单 */
 defineOptions({ name: 'PurchaseInForm' })
 
 const { t } = useI18n() // 国际化
@@ -183,49 +232,54 @@ const formLoading = ref(false) // 表单的加载中：1）修改时的数据加
 const formType = ref('') // 表单的类型：create - 新增；update - 修改；detail - 详情
 const formData = ref({
   id: undefined,
-  supplierId: undefined,
-  accountId: undefined,
-  inTime: undefined,
-  remark: undefined,
-  fileUrl: '',
-  discountPercent: 0,
-  discountPrice: 0,
-  totalPrice: 0,
-  otherPrice: 0,
-  orderNo: undefined,
-  items: [],
+   purchaseTime: '',
+    sellerName: undefined,
+     grainType: '',
+     season: '',
+     grainStatus: '',
+      plateNo: '',
+      grossWeight: undefined,
+      tareWeight: undefined,
+      netWeight: undefined,
+      moisture: undefined,
+      heavyMetal: undefined,
+      deduction: undefined,
+      unitPrice: undefined,
+      amount: undefined,
+      unloader: '',
+      remark: '',
   no: undefined // 入库单号，后端返回
 })
 const formRules = reactive({
-  supplierId: [{ required: true, message: '供应商不能为空', trigger: 'blur' }],
-  inTime: [{ required: true, message: '入库时间不能为空', trigger: 'blur' }]
+  purchaseTime: [{ required: true, message: '入库时间不能为空', trigger: 'blur' }],
+  unitPrice: [{ required: true, message: '车牌号', trigger: 'blur' }]
 })
 const disabled = computed(() => formType.value === 'detail')
 const formRef = ref() // 表单 Ref
-const supplierList = ref<SupplierVO[]>([]) // 供应商列表
-const accountList = ref<AccountVO[]>([]) // 账户列表
-const userList = ref<UserApi.UserVO[]>([]) // 用户列表
+const supplierList = ref<SupplierVO[]>([]) // 售粮人列表
+const plateList = ref<VehicleVO[]>([]) //车牌列表
 
 /** 子表的表单 */
 const subTabsName = ref('item')
 const itemFormRef = ref()
 
-/** 计算 discountPrice、totalPrice 价格 */
-watch(
-  () => formData.value,
-  (val) => {
-    if (!val) {
-      return
-    }
-    // 计算
-    const totalPrice = val.items.reduce((prev, curr) => prev + curr.totalPrice, 0)
-    const discountPrice =
-      val.discountPercent != null ? erpPriceMultiply(totalPrice, val.discountPercent / 100.0) : 0
-    formData.value.discountPrice = discountPrice
-    formData.value.totalPrice = totalPrice - discountPrice + val.otherPrice
-  },
-  { deep: true }
-)
+// 自动算净重
+function calcNet() {
+  formData.value.netWeight = (formData.value.grossWeight || 0) - (formData.value.tareWeight || 0);
+  calcAmount();
+
+}
+// 自动算金额
+function calcAmount() {
+  const price = Number(formData.value.unitPrice || 0);    // 结算单价
+    const moisture = Number(formData.value.moisture || 0);  // 水分
+    const deduct = Number(formData.value.deduction || 0);  // 扣杂
+    const weight = Number(formData.value.netWeight || 0);
+    // 金额 = 结算单价 − ( (水分 − 25) × 单价 + 扣杂 )
+    const extraDeduct = (moisture - 25) * price;
+    formData.value.amount = Math.ceil((price - ((extraDeduct + deduct)/100))*weight);
+}
+
 
 /** 打开弹窗 */
 const open = async (type: string, id?: number) => {
@@ -233,6 +287,10 @@ const open = async (type: string, id?: number) => {
   dialogTitle.value = t('action.' + type)
   formType.value = type
   resetForm()
+  // 加载供应商列表
+    supplierList.value = await SupplierApi.getSupplierSimpleList()
+  // 加载车牌列表
+    plateList.value = await VehicleApi.getVehicleSimpleList()
   // 修改时，设置数据
   if (id) {
     formLoading.value = true
@@ -242,16 +300,7 @@ const open = async (type: string, id?: number) => {
       formLoading.value = false
     }
   }
-  // 加载供应商列表
-  supplierList.value = await SupplierApi.getSupplierSimpleList()
-  // 加载用户列表
-  userList.value = await UserApi.getSimpleUserList()
-  // 加载账户列表
-  accountList.value = await AccountApi.getAccountSimpleList()
-  const defaultAccount = accountList.value.find((item) => item.defaultStatus)
-  if (defaultAccount) {
-    formData.value.accountId = defaultAccount.id
-  }
+
 }
 defineExpose({ open }) // 提供 open 方法，用于打开弹窗
 
@@ -261,31 +310,12 @@ const openPurchaseOrderInEnableList = () => {
   purchaseOrderInEnableListRef.value.open()
 }
 
-const handlePurchaseOrderChange = (order: PurchaseOrderVO) => {
-  // 将订单设置到入库单
-  formData.value.orderId = order.id
-  formData.value.orderNo = order.no
-  formData.value.supplierId = order.supplierId
-  formData.value.accountId = order.accountId
-  formData.value.discountPercent = order.discountPercent
-  formData.value.remark = order.remark
-  formData.value.fileUrl = order.fileUrl
-  // 将订单项设置到入库单项
-  order.items.forEach((item) => {
-    item.totalCount = item.count
-    item.count = item.totalCount - item.inCount
-    item.orderItemId = item.id
-    item.id = undefined
-  })
-  formData.value.items = order.items.filter((item) => item.count > 0)
-}
 
 /** 提交表单 */
 const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
 const submitForm = async () => {
   // 校验表单
   await formRef.value.validate()
-  await itemFormRef.value.validate()
   // 提交请求
   formLoading.value = true
   try {
@@ -308,18 +338,25 @@ const submitForm = async () => {
 /** 重置表单 */
 const resetForm = () => {
   formData.value = {
-    id: undefined,
-    supplierId: undefined,
-    accountId: undefined,
-    inTime: undefined,
-    remark: undefined,
-    fileUrl: undefined,
-    discountPercent: 0,
-    discountPrice: 0,
-    totalPrice: 0,
-    otherPrice: 0,
-    items: []
+   id: undefined,
+      purchaseTime: undefined,
+       sellerName: '',
+        grainType: '1',
+        season: '1',
+        grainStatus: '1',
+         plateNo: '',
+         grossWeight: undefined,
+               tareWeight: undefined,
+               netWeight: undefined,
+               moisture: undefined,
+               heavyMetal: undefined,
+               deduction: undefined,
+               unitPrice: undefined,
+               amount: undefined,
+         unloader: '',
+         remark: ''
   }
   formRef.value?.resetFields()
 }
+
 </script>

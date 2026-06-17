@@ -1,4 +1,3 @@
-<!-- ERP 仓库列表 -->
 <template>
   <ContentWrap>
     <!-- 搜索工作栏 -->
@@ -9,29 +8,32 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="仓库名称" prop="name">
+    <el-form-item label="车牌号" prop="licPlateNumber">
+            <el-input
+              v-model="queryParams.licPlateNumber"
+              placeholder="请输入车牌号"
+              clearable
+              @keyup.enter="handleQuery"
+              class="!w-240px"
+            />
+          </el-form-item>
+      <el-form-item label="姓名" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入仓库名称"
+          placeholder="请输入姓名"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="仓库状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="请选择仓库状态"
+      <el-form-item label="手机号码" prop="phone">
+        <el-input
+          v-model="queryParams.phone"
+          placeholder="请输入手机号码"
           clearable
+          @keyup.enter="handleQuery"
           class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
+        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -40,7 +42,7 @@
           type="primary"
           plain
           @click="openForm('create')"
-          v-hasPermi="['erp:warehouse:create']"
+          v-hasPermi="['erp:vehicle:create']"
         >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
@@ -49,7 +51,7 @@
           plain
           @click="handleExport"
           :loading="exportLoading"
-          v-hasPermi="['erp:warehouse:export']"
+          v-hasPermi="['erp:vehicle:export']"
         >
           <Icon icon="ep:download" class="mr-5px" /> 导出
         </el-button>
@@ -60,55 +62,18 @@
   <!-- 列表 -->
   <ContentWrap>
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
-      <el-table-column label="合同号" align="center" prop="name" />
-      <el-table-column label="客户名称" align="center" prop="name" />
-      <el-table-column label="溯源地" align="center" prop="name" />
-      <el-table-column label="入库时间" align="center" prop="address" />
-      <el-table-column
-        label="净重"
-        align="center"
-        prop="warehousePrice"
-        :formatter="erpPriceTableColumnFormatter"
-      />
-      <el-table-column
-        label="结算单价"
-        align="center"
-        prop="truckagePrice"
-        :formatter="erpPriceTableColumnFormatter"
-      />
-      <el-table-column label="金额" align="center" prop="principal" />
-       <el-table-column label="车牌号码" align="center" prop="licPlateNumber" />
+      <el-table-column label="车牌号" align="center" prop="licPlateNumber" />
+      <el-table-column label="姓名" align="center" prop="name" />
+      <el-table-column label="身份证号码" align="center" prop="idCard" />
+      <el-table-column label="手机号码" align="center" prop="phone" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="排序" align="center" prop="sort" />
-      <el-table-column label="状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
-        </template>
-      </el-table-column>
-      <el-table-column label="是否默认" align="center" prop="defaultStatus">
-        <template #default="scope">
-          <el-switch
-            v-model="scope.row.defaultStatus"
-            :active-value="true"
-            :inactive-value="false"
-            @change="handleDefaultStatusChange(scope.row)"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="创建时间"
-        align="center"
-        prop="createTime"
-        :formatter="dateFormatter"
-        width="180px"
-      />
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
-            v-hasPermi="['erp:warehouse:update']"
+            v-hasPermi="['erp:vehicle:update']"
           >
             编辑
           </el-button>
@@ -116,7 +81,7 @@
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
-            v-hasPermi="['erp:warehouse:delete']"
+            v-hasPermi="['erp:vehicle:delete']"
           >
             删除
           </el-button>
@@ -133,31 +98,31 @@
   </ContentWrap>
 
   <!-- 表单弹窗：添加/修改 -->
-  <WarehouseForm ref="formRef" @success="getList" />
+  <VehicleForm ref="formRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
-import { getIntDictOptions, DICT_TYPE } from '@/utils/dict'
+import { DICT_TYPE } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
-import { WarehouseApi, WarehouseVO } from '@/api/erp/stock/warehouse'
-import WarehouseForm from './WarehouseForm.vue'
-import { erpPriceTableColumnFormatter } from '@/utils'
+import { VehicleApi, VehicleVO } from '@/api/erp/purchase/vehicle'
+import VehicleForm from './VehicleForm.vue'
 
-/** ERP 仓库列表 */
-defineOptions({ name: 'ErpWarehouse' })
+/** ERP 供应商 列表 */
+defineOptions({ name: 'ErpVehicle' })
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
-const list = ref<WarehouseVO[]>([]) // 列表的数据
+const list = ref<VehicleVO[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   name: undefined,
-  status: undefined
+  phone: undefined,
+  licPlateNumber: undefined
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -166,7 +131,7 @@ const exportLoading = ref(false) // 导出的加载中
 const getList = async () => {
   loading.value = true
   try {
-    const data = await WarehouseApi.getWarehousePage(queryParams)
+    const data = await VehicleApi.getVehiclePage(queryParams)
     list.value = data.list
     total.value = data.total
   } finally {
@@ -198,27 +163,11 @@ const handleDelete = async (id: number) => {
     // 删除的二次确认
     await message.delConfirm()
     // 发起删除
-    await WarehouseApi.deleteWarehouse(id)
+    await VehicleApi.deleteVehicle(id)
     message.success(t('common.delSuccess'))
     // 刷新列表
     await getList()
   } catch {}
-}
-
-/** 修改默认状态 */
-const handleDefaultStatusChange = async (row: WarehouseVO) => {
-  try {
-    // 修改状态的二次确认
-    const text = row.defaultStatus ? '设置' : '取消'
-    await message.confirm('确认要' + text + '"' + row.name + '"默认吗?')
-    // 发起修改状态
-    await WarehouseApi.updateWarehouseDefaultStatus(row.id, row.defaultStatus)
-    // 刷新列表
-    await getList()
-  } catch (e) {
-    // 取消后，进行恢复按钮
-    row.defaultStatus = !row.defaultStatus
-  }
 }
 
 /** 导出按钮操作 */
@@ -228,8 +177,8 @@ const handleExport = async () => {
     await message.exportConfirm()
     // 发起导出
     exportLoading.value = true
-    const data = await WarehouseApi.exportWarehouse(queryParams)
-    download.excel(data, '仓库.xls')
+    const data = await VehicleApi.exportVehicle(queryParams)
+    download.excel(data, 'ERP 供应商.xls')
   } catch {
   } finally {
     exportLoading.value = false

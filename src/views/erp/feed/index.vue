@@ -1,6 +1,4 @@
 <template>
-  <doc-alert title="【采购】采购订单、入库、退货" url="https://doc.iocoder.cn/erp/purchase/" />
-
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
@@ -10,18 +8,27 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="售粮人姓名" prop="name">
+    <el-form-item label="合同编号" prop="contractNo">
+            <el-input
+              v-model="queryParams.contractNo"
+              placeholder="请输入合同编号"
+              clearable
+              @keyup.enter="handleQuery"
+              class="!w-240px"
+            />
+          </el-form-item>
+      <el-form-item label="客户名称" prop="customerName">
         <el-input
-          v-model="queryParams.name"
-          placeholder="请输入名称"
+          v-model="queryParams.customerName"
+          placeholder="请输入姓名"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="手机号码" prop="mobile">
+      <el-form-item label="手机号码" prop="customerPhone">
         <el-input
-          v-model="queryParams.mobile"
+          v-model="queryParams.customerPhone"
           placeholder="请输入手机号码"
           clearable
           @keyup.enter="handleQuery"
@@ -35,7 +42,7 @@
           type="primary"
           plain
           @click="openForm('create')"
-          v-hasPermi="['erp:supplier:create']"
+          v-hasPermi="['erp:feed:enter:create']"
         >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
@@ -44,7 +51,7 @@
           plain
           @click="handleExport"
           :loading="exportLoading"
-          v-hasPermi="['erp:supplier:export']"
+          v-hasPermi="['erp:vehicle:export']"
         >
           <Icon icon="ep:download" class="mr-5px" /> 导出
         </el-button>
@@ -55,23 +62,28 @@
   <!-- 列表 -->
   <ContentWrap>
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
-      <el-table-column label="售粮人姓名" align="center" prop="name" />
-      <el-table-column label="身份证号" align="center" prop="contact" />
-      <el-table-column label="手机号码" align="center" prop="mobile" />
-      <el-table-column label="售粮人地址" align="center" prop="taxNo" />
+      <el-table-column label="合同编号" align="center" prop="contractNo" />
+      <el-table-column label="客户名称" align="center" prop="customerName" />
+      <el-table-column label="客户手机号" align="center" prop="customerPhone" />
+      <el-table-column label="车牌号" align="center" prop="plateNumber" />
+      <el-table-column label="货源地" align="center" prop="originSource" />
+      <el-table-column label="入库时间" align="center" >
+      <template #default="scope">
+      {{ formatDate(scope.row.storageTime, 'YYYY-MM-DD') }}
+      </template>
+       </el-table-column>
+      <el-table-column label="结算单价" align="center" prop="unitPrice" />
+      <el-table-column label="净重" align="center" prop="netWeight" />
+      <el-table-column label="金额" align="center" prop="totalAmount" />
+      <el-table-column label="运费" align="center" prop="freight" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
-            v-hasPermi="['erp:supplier:update']"
+            v-hasPermi="['erp:feed:enter:update']"
           >
             编辑
           </el-button>
@@ -79,7 +91,7 @@
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
-            v-hasPermi="['erp:supplier:delete']"
+            v-hasPermi="['erp:feed:enter:delete']"
           >
             删除
           </el-button>
@@ -96,31 +108,31 @@
   </ContentWrap>
 
   <!-- 表单弹窗：添加/修改 -->
-  <SupplierForm ref="formRef" @success="getList" />
+  <FeedEnterForm ref="formRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
 import { DICT_TYPE } from '@/utils/dict'
-import { dateFormatter } from '@/utils/formatTime'
+import { dateFormatter,formatDate } from '@/utils/formatTime'
 import download from '@/utils/download'
-import { SupplierApi, SupplierVO } from '@/api/erp/purchase/supplier'
-import SupplierForm from './SupplierForm.vue'
+import { FeedEnterApi, feedStorageVO } from '@/api/erp/feed/enter'
+import FeedEnterForm from './FeedEnterForm.vue'
 
-/** ERP 供应商 列表 */
-defineOptions({ name: 'ErpSupplier' })
+/** ERP 饲料谷 列表 */
+defineOptions({ name: 'FeedEnter' })
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
-const list = ref<SupplierVO[]>([]) // 列表的数据
+const list = ref<feedStorageVO[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  name: undefined,
-  mobile: undefined,
-  telephone: undefined
+  contractNo: undefined,
+  customerName: undefined,
+  customerPhone: undefined
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -129,7 +141,7 @@ const exportLoading = ref(false) // 导出的加载中
 const getList = async () => {
   loading.value = true
   try {
-    const data = await SupplierApi.getSupplierPage(queryParams)
+    const data = await FeedEnterApi.getFeedEnterPage(queryParams)
     list.value = data.list
     total.value = data.total
   } finally {
@@ -161,7 +173,7 @@ const handleDelete = async (id: number) => {
     // 删除的二次确认
     await message.delConfirm()
     // 发起删除
-    await SupplierApi.deleteSupplier(id)
+    await FeedEnterApi.deleteFeed(id)
     message.success(t('common.delSuccess'))
     // 刷新列表
     await getList()
@@ -175,8 +187,8 @@ const handleExport = async () => {
     await message.exportConfirm()
     // 发起导出
     exportLoading.value = true
-    const data = await SupplierApi.exportSupplier(queryParams)
-    download.excel(data, 'ERP 供应商.xls')
+    const data = await FeedEnterApi.exportFeed(queryParams)
+    download.excel(data, 'ERP 饲料谷入库.xls')
   } catch {
   } finally {
     exportLoading.value = false

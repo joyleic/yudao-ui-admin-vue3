@@ -1,6 +1,4 @@
 <template>
-  <doc-alert title="【采购】采购订单、入库、退货" url="https://doc.iocoder.cn/erp/purchase/" />
-
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
@@ -62,63 +60,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="仓库" prop="warehouseId">
-        <el-select
-          v-model="queryParams.warehouseId"
-          clearable
-          filterable
-          placeholder="请选择仓库"
-          class="!w-240px"
-        >
-          <el-option
-            v-for="item in warehouseList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="创建人" prop="creator">
-        <el-select
-          v-model="queryParams.creator"
-          clearable
-          filterable
-          placeholder="请选择创建人"
-          class="!w-240px"
-        >
-          <el-option
-            v-for="item in userList"
-            :key="item.id"
-            :label="item.nickname"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="关联订单" prop="orderNo">
-        <el-input
-          v-model="queryParams.orderNo"
-          placeholder="请输入关联订单"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="结算账户" prop="accountId">
-        <el-select
-          v-model="queryParams.accountId"
-          clearable
-          filterable
-          placeholder="请选择结算账户"
-          class="!w-240px"
-        >
-          <el-option
-            v-for="item in accountList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="付款状态" prop="paymentStatus">
         <el-select
           v-model="queryParams.paymentStatus"
@@ -130,30 +71,6 @@
           <el-option label="部分付款" value="1" />
           <el-option label="全部付款" value="2" />
         </el-select>
-      </el-form-item>
-      <el-form-item label="审核状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="请选择审核状态"
-          clearable
-          class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getIntDictOptions(DICT_TYPE.ERP_AUDIT_STATUS)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -197,57 +114,76 @@
       :show-overflow-tooltip="true"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column width="30" label="选择" type="selection" />
-      <el-table-column min-width="180" label="入库单号" align="center" prop="no" />
-      <el-table-column label="产品信息" align="center" prop="productNames" min-width="200" />
-      <el-table-column label="供应商" align="center" prop="supplierName" />
-      <el-table-column
-        label="入库时间"
-        align="center"
-        prop="inTime"
-        :formatter="dateFormatter2"
-        width="120px"
-      />
-      <el-table-column label="创建人" align="center" prop="creatorName" />
-      <el-table-column
-        label="总数量"
-        align="center"
-        prop="totalCount"
-        :formatter="erpCountTableColumnFormatter"
-      />
-      <el-table-column
-        label="应付金额"
-        align="center"
-        prop="totalPrice"
-        :formatter="erpPriceTableColumnFormatter"
-      />
-      <el-table-column
-        label="已付金额"
-        align="center"
-        prop="paymentPrice"
-        :formatter="erpPriceTableColumnFormatter"
-      />
-      <el-table-column label="未付金额" align="center">
-        <template #default="scope">
-          <span v-if="scope.row.paymentPrice === scope.row.totalPrice">0</span>
-          <el-tag type="danger" v-else>
-            {{ erpPriceInputFormatter(scope.row.totalPrice - scope.row.paymentPrice) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="审核状态" align="center" fixed="right" width="90" prop="status">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.ERP_AUDIT_STATUS" :value="scope.row.status" />
-        </template>
-      </el-table-column>
+
+          <el-table-column
+            label="入库时间"
+            align="center"
+            prop="purchaseTime"
+            :formatter="dateFormatter2"
+            width="120px"
+          />
+
+            <el-table-column prop="sellerName" label="售粮人"  align="center"/>
+            <el-table-column  label="粮食品种"  align="center">
+            <template #default="scope">
+              <span v-if="scope.row.grainType === 1">
+                普杂
+              </span>
+            </template>
+            </el-table-column>
+            <el-table-column  label="季节" align="center">
+            <template #default="scope">
+              <span v-if="scope.row.season === 1">
+                    早稻
+              </span>
+             <span v-if="scope.row.season === 2">
+                                            中稻
+                                      </span>
+             <span v-if="scope.row.season === 3">
+                                            晚稻
+                                      </span>
+             </template>
+            </el-table-column>
+            <el-table-column  label="稻谷状态" align="center">
+            <template #default="scope">
+                          <span v-if="scope.row.grainStatus === 1">
+                                湿稻谷
+                          </span>
+                         <span v-if="scope.row.grainStatus === 2">
+                               干稻谷
+                          </span>
+                         </template>
+              </el-table-column>
+           <el-table-column prop="plateNo" label="车牌号" align="center"/>
+           <el-table-column prop="grossWeight" label="毛重(KG)" align="center"/>
+           <el-table-column prop="tareWeight" label="皮重(KG)" align="center"/>
+           <el-table-column prop="netWeight" label="净重(KG)" align="center"/>
+           <el-table-column prop="moisture" label="水分" align="center" />
+           <el-table-column prop="heavyMetal" label="重金属"  align="center"/>
+           <el-table-column prop="deduction" label="扣杂"  align="center"/>
+           <el-table-column prop="unitPrice" label="单价"  align="center"/>
+           <el-table-column prop="amount" label="应付金额(元)"  align="center"/>
+           <el-table-column prop="realPay" label="已付金额(元)"  align="center"/>
+           <el-table-column prop="unloader" label="卸车人"  align="center"/>
+
+
       <el-table-column label="操作" align="center" fixed="right" width="220">
         <template #default="scope">
           <el-button
             link
-            @click="openForm('detail', scope.row.id)"
-            v-hasPermi="['erp:purchase-in:query']"
+            @click="openPay(scope.row.amount,scope.row.realPay,scope.row.id)"
+            v-hasPermi="['erp:purchase-in:pay']"
+             v-if="scope.row.isFinish === '0'"
           >
-            详情
+            支付
+          </el-button>
+
+          <el-button
+            link
+            @click="openPrint(scope.row.id)"
+            v-hasPermi="['erp:purchase-in:print']"
+          >
+            打印
           </el-button>
           <el-button
             link
@@ -257,24 +193,6 @@
             :disabled="scope.row.status === 20"
           >
             编辑
-          </el-button>
-          <el-button
-            link
-            type="primary"
-            @click="handleUpdateStatus(scope.row.id, 20)"
-            v-hasPermi="['erp:purchase-in:update-status']"
-            v-if="scope.row.status === 10"
-          >
-            审批
-          </el-button>
-          <el-button
-            link
-            type="danger"
-            @click="handleUpdateStatus(scope.row.id, 10)"
-            v-hasPermi="['erp:purchase-in:update-status']"
-            v-else
-          >
-            反审批
           </el-button>
           <el-button
             link
@@ -298,6 +216,8 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <PurchaseInForm ref="formRef" @success="getList" />
+  <PrintSettlement ref="printRef"/>
+  <PayForm ref="payRef" @success="getList"/>
 </template>
 
 <script setup lang="ts">
@@ -306,6 +226,7 @@ import { dateFormatter2 } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { PurchaseInApi, PurchaseInVO } from '@/api/erp/purchase/in'
 import PurchaseInForm from './PurchaseInForm.vue'
+import PrintSettlement from './PrintSettlement.vue'
 import { ProductApi, ProductVO } from '@/api/erp/product/product'
 import { UserVO } from '@/api/system/user'
 import * as UserApi from '@/api/system/user'
@@ -380,6 +301,16 @@ const openForm = (type: string, id?: number) => {
   formRef.value.open(type, id)
 }
 
+const printRef = ref()
+const openPrint = (id?: number)=>{
+  printRef.value.open(id)
+}
+
+const payRef = ref()
+const openPay = (amount?: number,realPay?: number,id?: number)=>{
+        payRef.value.open(amount,realPay,id)
+      }
+
 /** 删除按钮操作 */
 const handleDelete = async (ids: number[]) => {
   try {
@@ -432,11 +363,11 @@ const handleSelectionChange = (rows: PurchaseInVO[]) => {
 onMounted(async () => {
   await getList()
   // 加载产品、仓库列表、供应商
-  productList.value = await ProductApi.getProductSimpleList()
-  supplierList.value = await SupplierApi.getSupplierSimpleList()
-  userList.value = await UserApi.getSimpleUserList()
-  warehouseList.value = await WarehouseApi.getWarehouseSimpleList()
-  accountList.value = await AccountApi.getAccountSimpleList()
+   //productList.value = await ProductApi.getProductSimpleList()
+   //supplierList.value = await SupplierApi.getSupplierSimpleList()
+   //userList.value = await UserApi.getSimpleUserList()
+   //warehouseList.value = await WarehouseApi.getWarehouseSimpleList()
+   //accountList.value = await AccountApi.getAccountSimpleList()
 })
 // TODO 芋艿：可优化功能：列表界面，支持导入
 // TODO 芋艿：可优化功能：详情界面，支持打印
