@@ -121,6 +121,13 @@ const open = async (amount?: number,realPay?: number,orderNo?: String) => {
   formData.value.shouldPay = amount-realPay
   formData.value.orderNo = orderNo
 }
+
+const openKkkk = async () => {
+  dialogVisible.value = true
+  dialogTitle.value = '粮食收购支付'
+  resetForm()
+}
+
 defineExpose({ open }) // 提供 open 方法，用于打开弹窗
 
 
@@ -159,7 +166,6 @@ const addAmount = () => {
   formData.value.tempPay = total
 }
 
-/** 重置表单 */
 /** 重置表单 */
 const resetForm = () => {
   formData.value = {

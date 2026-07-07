@@ -8,29 +8,33 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="入库单号" prop="no">
-        <el-input
-          v-model="queryParams.no"
-          placeholder="请输入入库单号"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="产品" prop="productId">
+      <el-form-item label="粮食品种" prop="grainType">
+                          <el-select
+                            v-model="queryParams.grainType"
+                            placeholder="请选择粮食品种"
+                            class="!w-240px"
+                          >
+                           <el-option label="全部" value=""/>
+                            <el-option label="普杂" value="1"/>
+                            <el-option label="泰优" value="2"/>
+                            <el-option label="天龙" value="3"/>
+                            <el-option label="优质稻" value="4"/>
+                          </el-select>
+                        </el-form-item>
+      <el-form-item label="售粮人" prop="sellerName">
         <el-select
-          v-model="queryParams.productId"
+          v-model="queryParams.sellerName"
           clearable
           filterable
           placeholder="请选择产品"
           class="!w-240px"
         >
           <el-option
-            v-for="item in productList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
+                         v-for="item in supplierList"
+                         :key="item.name"
+                         :label="item.name"
+                         :value="item.name"
+                       />
         </el-select>
       </el-form-item>
       <el-form-item label="入库时间" prop="inTime">
@@ -44,32 +48,15 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="供应商" prop="supplierId">
+      <el-form-item label="付款状态" prop="isFinish">
         <el-select
-          v-model="queryParams.supplierId"
-          clearable
-          filterable
-          placeholder="请选择供供应商"
-          class="!w-240px"
-        >
-          <el-option
-            v-for="item in supplierList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="付款状态" prop="paymentStatus">
-        <el-select
-          v-model="queryParams.paymentStatus"
+          v-model="queryParams.isFinish"
           placeholder="请选择有款状态"
           clearable
           class="!w-240px"
         >
           <el-option label="未付款" value="0" />
-          <el-option label="部分付款" value="1" />
-          <el-option label="全部付款" value="2" />
+          <el-option label="已付款" value="1" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -129,6 +116,15 @@
               <span v-if="scope.row.grainType === 1">
                 普杂
               </span>
+               <span v-if="scope.row.grainType === 2">
+                                            泰优
+                                      </span>
+             <span v-if="scope.row.grainType === 3">
+                                            天龙
+                                      </span>
+               <span v-if="scope.row.grainType === 4">
+                                             优质稻
+                                       </span>
             </template>
             </el-table-column>
             <el-table-column  label="季节" align="center">
@@ -226,6 +222,7 @@ import { dateFormatter2 } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { PurchaseInApi, PurchaseInVO } from '@/api/erp/purchase/in'
 import PurchaseInForm from './PurchaseInForm.vue'
+import PayForm from './PayForm.vue'
 import PrintSettlement from './PrintSettlement.vue'
 import { ProductApi, ProductVO } from '@/api/erp/product/product'
 import { UserVO } from '@/api/system/user'
@@ -252,16 +249,15 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   no: undefined,
-  supplierId: undefined,
-  productId: undefined,
-  warehouseId: undefined,
   inTime: [],
   orderNo: undefined,
-  paymentStatus: undefined,
+  sellerName:undefined,
+  isFinish: undefined,
   accountId: undefined,
   status: undefined,
   remark: undefined,
-  creator: undefined
+  creator: undefined,
+  grainType:undefined
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -362,6 +358,8 @@ const handleSelectionChange = (rows: PurchaseInVO[]) => {
 /** 初始化 **/
 onMounted(async () => {
   await getList()
+    // 加载供应商列表
+      supplierList.value = await SupplierApi.getSupplierSimpleList()
   // 加载产品、仓库列表、供应商
    //productList.value = await ProductApi.getProductSimpleList()
    //supplierList.value = await SupplierApi.getSupplierSimpleList()

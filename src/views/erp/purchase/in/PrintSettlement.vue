@@ -13,57 +13,76 @@
               <td style="border:1px solid #000; padding:8px;" width="12%">售粮人姓名</td>
               <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.sellerName}}</td>
               <td style="border:1px solid #000; padding:8px;" width="10%">身份证号</td>
-              <td style="border:1px solid #000; padding:8px;" width="20%">{{formData.idCard}}</td>
+              <td style="border:1px solid #000; padding:8px;" width="19%">{{formData.idCard}}</td>
               <td style="border:1px solid #000; padding:8px;" width="10%">电话</td>
-              <td style="border:1px solid #000; padding:8px;" width="15%">{{formData.phone}}</td>
+              <td style="border:1px solid #000; padding:8px;" width="14%">{{formData.phone}}</td>
               <td style="border:1px solid #000; padding:8px;" width="10%">车牌号</td>
-              <td style="border:1px solid #000; padding:8px;" width="15%">{{formData.plateNo}}</td>
+              <td style="border:1px solid #000; padding:8px;" width="16%">{{formData.plateNo}}</td>
             </tr>
-            <tr>
+             <tr>
                           <td style="border:1px solid #000; padding:8px;" width="12%">地址</td>
                            <td style="border:1px solid #000; padding:8px;" colspan="7" width="75%">{{formData.address}}</td>
                         </tr>
 
-                        <tr>
-                <td  style="border:1px solid #000; padding:8px;" width="12%">粮食品种</td>
-                 <td  style="border:1px solid #000; padding:8px;" width="10%">{{formData.grainTypeName}}</td>
-                <td style="border:1px solid #000; padding:8px;" width="10%">季节</td>
-                <td style="border:1px solid #000; padding:8px;" width="20%">{{formData.seasonName}}</td>
-                <td style="border:1px solid #000; padding:8px;" width="10%">稻谷状态</td>
-                 <td style="border:1px solid #000; padding:8px;" width="15%">{{formData.grainStatusName}}</td>
-              </tr>
+                          <tr>
+                            <td  style="border:1px solid #000; padding:8px;" width="12%">粮食品种</td>
+                             <td  style="border:1px solid #000; padding:8px;" width="10%">{{formData.grainTypeName}}</td>
+                            <td style="border:1px solid #000; padding:8px;" width="10%">季节</td>
+                            <td style="border:1px solid #000; padding:8px;" width="19%">{{formData.seasonName}}</td>
+                            <td style="border:1px solid #000; padding:8px;" width="10%">稻谷状态</td>
+                             <td style="border:1px solid #000; padding:8px;" width="14%">{{formData.grainStatusName}}</td>
+                              <td style="border:1px solid #000; padding:8px;" width="10%"></td>
+                             <td style="border:1px solid #000; padding:8px;" width="16%"></td>
+                          </tr>
+                          <tr>
+                       <td style="border:1px solid #000; padding:8px;" width="12%">毛重</td>
+                        <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.grossWeight}}</td>
+                       <td style="border:1px solid #000; padding:8px;" width="10%">皮重</td>
+                       <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.tareWeight}}</td>
+                        <td style="border:1px solid #000; padding:8px;" width="10%">净重</td>
+                        <td style="border:1px solid #000; padding:8px;" width="10%" >{{formData.netWeight}}</td>
+                         <td style="border:1px solid #000; padding:8px;" width="10%">纯净重</td>
+                          <td style="border:1px solid #000; padding:8px;" width="10%" >{{formData.pureWeight}}</td>
+                     </tr>
+
+
+
+
               <tr>
-                    <td style="border:1px solid #000; padding:8px;" width="12%">毛重(KG)</td>
-                     <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.grossWeight}}</td>
-                    <td style="border:1px solid #000; padding:8px;" width="10%">皮重(KG)</td>
-                    <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.tareWeight}}</td>
-                     <td style="border:1px solid #000; padding:8px;" width="10%">净重(KG)</td>
-                     <td style="border:1px solid #000; padding:8px;" colspan="3" width="15%">{{formData.netWeight}}</td>
-                  </tr>
-                  <tr>
-                    <td style="border:1px solid #000; padding:8px;" width="12%">水分(%)</td>
-                     <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.moisture}}</td>
-                    <td style="border:1px solid #000; padding:8px;" width="10%">重金属</td>
-                    <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.heavyMetal}}</td>
-                    <td style="border:1px solid #000; padding:8px;" width="10%">扣杂</td>
-                    <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.deduction}}</td>
-                    <td style="border:1px solid #000; padding:8px;" width="10%">结算单价</td>
-                     <td style="border:1px solid #000; padding:8px;" width="15%">{{formData.unitPrice}}</td>
-                  </tr>
-                  <tr>
-                      <td style="border:1px solid #000; padding:8px;" width="12%">金额</td>
-                      <td style="border:1px solid #000; padding:8px;" colspan="2" width="20%">{{formData.amount}}</td>
-                      <td style="border:1px solid #000; padding:8px;"  width="15%">金额大写</td>
-                      <td style="border:1px solid #000; padding:8px;" colspan="5" width="15%">{{formData.amountUp}}</td>
-                    </tr>
-                     <tr>
-                      <td style="border:1px solid #000; padding:8px;" width="10%">收款方姓名</td>
-                       <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.bankName}}</td>
-                      <td style="border:1px solid #000; padding:8px;"  width="10%">账号</td>
-                      <td style="border:1px solid #000; padding:8px;" colspan="2" width="10%">{{formData.bankAccount}}</td>
-                      <td style="border:1px solid #000; padding:8px;"  width="10%">开户行</td>
-                      <td style="border:1px solid #000; padding:8px;" colspan="2" width="15%">{{formData.bankAddress}}</td>
-                    </tr>
+                             <td style="border:1px solid #000; padding:8px;" width="12%">水分(%)</td>
+                              <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.moisture}}</td>
+                              <td style="border:1px solid #000; padding:8px;" width="10%">水分扣重</td>
+                              <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.moistDeduction}}</td>
+                             <td style="border:1px solid #000; padding:8px;" width="10%">重金属</td>
+                             <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.heavyMetal}}</td>
+                             <td style="border:1px solid #000; padding:8px;" width="10%">扣杂</td>
+                             <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.deduction}}</td>
+
+                           </tr>
+
+                           <tr>
+                             <td style="border:1px solid #000; padding:8px;" width="12%">杂质扣重</td>
+                              <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.deductionKg}}</td>
+                             <td style="border:1px solid #000; padding:8px;" width="10%">结算单价</td>
+                              <td style="border:1px solid #000; padding:8px;" width="15%">{{formData.unitPrice}}</td>
+                              <td style="border:1px solid #000; padding:8px;" width="12%">结算金额</td>
+                             <td style="border:1px solid #000; padding:8px;"  width="10%">{{formData.amount}}</td>
+                              <td style="border:1px solid #000; padding:8px;" width="10%"></td>
+                               <td style="border:1px solid #000; padding:8px;" width="16%"></td>
+                           </tr>
+
+                        <tr>
+                         <td style="border:1px solid #000; padding:8px;"  width="10%">金额大写</td>
+                         <td style="border:1px solid #000; padding:8px;" colspan="7" >{{formData.amountUp}}</td>
+                       </tr>
+                        <tr>
+                         <td style="border:1px solid #000; padding:8px;" width="10%">收款方姓名</td>
+                          <td style="border:1px solid #000; padding:8px;" width="10%">{{formData.bankName}}</td>
+                         <td style="border:1px solid #000; padding:8px;"  width="10%">账号</td>
+                         <td style="border:1px solid #000; padding:8px;" colspan="2" width="10%">{{formData.bankAccount}}</td>
+                         <td style="border:1px solid #000; padding:8px;"  width="10%">开户行</td>
+                         <td style="border:1px solid #000; padding:8px;" colspan="2" width="15%">{{formData.bankAddress}}</td>
+                       </tr>
                 </tbody>
       </table>
    <div style="margin-top: 30px; font-size: 16px;">
@@ -125,7 +144,10 @@ const formData = ref({
       bankName:'',
       bankAccount:'',
       bankAddress:'',
-      tempData:''
+      tempData:'',
+      pureWeight:'',
+      deductionKg:'',
+      moistDeduction:''
 
 
 })
@@ -139,6 +161,7 @@ const open = async (id?: number) => {
     formLoading.value = true
     try {
       formData.value = await PurchaseInApi.getPrint(id)
+      console.log(formData.value)
       formData.value.tempData = getYmd();
       amountToChinese(formData.value.amount);
     } finally {
