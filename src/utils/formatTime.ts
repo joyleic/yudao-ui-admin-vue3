@@ -73,6 +73,25 @@ export function formatDate(date: Date, format?: string): string {
 }
 
 /**
+ * 格式化可为空的时间日期
+ *
+ * @param date 当前时间，new Date() 格式或者字符串时间格式
+ * @param format 需要转换的时间格式字符串
+ * @param emptyText 空值展示文案
+ * @returns 返回格式化后的时间字符串
+ */
+export function formatNullableDate(
+  date?: Date | string | null,
+  format = 'YYYY-MM-DD HH:mm:ss',
+  emptyText = '-'
+): string {
+  if (!date) {
+    return emptyText
+  }
+  return formatDate(date, format) || emptyText
+}
+
+/**
  * 获取当前的日期+时间
  */
 export function getNowDateTime() {
