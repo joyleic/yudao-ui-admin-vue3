@@ -46,9 +46,9 @@
                       class="!w-1/1"
                     >
                       <el-option label="普杂" value="1"/>
-                      <el-option label="泰优398" value="2"/>
+                      <el-option label="泰优" value="2"/>
                       <el-option label="天龙" value="3"/>
-                      <el-option label="野香优莉丝" value="4"/>
+                      <el-option label="优质稻" value="4"/>
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -94,6 +94,7 @@
             </el-select>
           </el-form-item>
           </el-col>
+
           <el-col :span="5">
                             <el-form-item label="毛重（KG）" prop="grossWeight">
                               <el-input
@@ -127,6 +128,18 @@
                                                    />
                                                  </el-form-item>
                                                </el-col>
+           <el-col :span="5">
+          <el-form-item label="纯净重(KG)" prop="pureWeight">
+                    <el-input
+                    disabled
+                      type="text"
+                      v-model="formData.pureWeight"
+                      class="!w-1/1"
+                      placeholder="请输入重量"
+                      @input="calcNet"
+                    />
+                  </el-form-item>
+                </el-col>
 
         <el-col :span="5">
                        <el-form-item label="水分" prop="moisture">
@@ -135,10 +148,21 @@
                        v-model="formData.moisture"
                        class="!w-1/1"
                        placeholder="水分"
-                       @input="calcAmount"
+                       @input="calcMoisture"
                        />
                        </el-form-item>
           </el-col>
+           <el-col :span="5">
+                                 <el-form-item label="水分扣重(KG)" prop="moistDeduction">
+                                 <el-input
+                                 type="text"
+                                 disabled
+                                 v-model="formData.moistDeduction"
+                                 class="!w-1/1"
+                                 placeholder="水分扣重"
+                                 />
+                                 </el-form-item>
+                    </el-col>
            <el-col :span="5">
                                  <el-form-item label="重金属值" prop="heavyMetal">
                                  <el-input
@@ -156,11 +180,23 @@
             v-model="formData.deduction"
             class="!w-1/1"
             placeholder="扣杂"
-             @input="calcAmount"/>
+             @input="calcMoisture"/>
             </el-form-item>
             </el-col>
             <el-col :span="5">
-                <el-form-item label="结算单价" prop="unitPrice">
+                 <el-form-item label="杂质扣重(KG)" prop="deductionKg">
+                 <el-input
+                 type="text"
+                 disabled
+                 v-model="formData.deductionKg"
+                 class="!w-1/1"
+                 placeholder="杂质扣重"
+                 @input="calcAmount"
+                 />
+                 </el-form-item>
+          </el-col>
+            <el-col :span="5">
+                <el-form-item label="结算单价(KG)" prop="unitPrice">
                 <el-input
                 type="text"
                 v-model="formData.unitPrice"
@@ -170,13 +206,13 @@
                 </el-form-item>
               </el-col>
                <el-col :span="5">
-                  <el-form-item label="金额" prop="amount">
+                  <el-form-item label="结算金额" prop="amount">
                   <el-input
                   type="text"
                   v-model="formData.amount"
                   class="!w-1/1"
                   placeholder="请输入金额"
-                   @input="calcAmount"/>
+                   />
                   </el-form-item>
                 </el-col>
                  <el-col :span="5">
@@ -246,8 +282,11 @@ const formData = ref({
       deduction: undefined,
       unitPrice: undefined,
       amount: undefined,
-      unloader: '',
+      unloader: '陈三英',
       remark: '',
+      pureWeight:'',
+      deductionKg:'',
+      moistDeduction:'',
   no: undefined // 入库单号，后端返回
 })
 const formRules = reactive({
@@ -269,15 +308,20 @@ function calcNet() {
   calcAmount();
 
 }
+
+
+// 自动算纯净重
+function calcMoisture() {
+  formData.value.moistDeduction = (formData.value.netWeight * ((formData.value.moisture)-25|| 0))/100;
+  formData.value.deductionKg = (formData.value.netWeight * ((formData.value.deduction||0)))/100;
+  formData.value.pureWeight =  formData.value.netWeight - formData.value.moistDeduction -formData.value.deductionKg;
+  calcAmount();
+}
 // 自动算金额
 function calcAmount() {
   const price = Number(formData.value.unitPrice || 0);    // 结算单价
-    const moisture = Number(formData.value.moisture || 0);  // 水分
-    const deduct = Number(formData.value.deduction || 0);  // 扣杂
-    const weight = Number(formData.value.netWeight || 0);
-    // 金额 = 结算单价 − ( (水分 − 25) × 单价 + 扣杂 )
-    const extraDeduct = (moisture - 25) * price;
-    formData.value.amount = Math.ceil((price - ((extraDeduct + deduct)/100))*weight);
+    // 金额 = 结算单价 * 纯净重
+    formData.value.amount = Math.ceil(price*formData.value.pureWeight);
 }
 
 

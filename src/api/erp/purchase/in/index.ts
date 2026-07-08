@@ -18,7 +18,10 @@ export interface PurchaseInVO {
         unitPrice: number,
         amount: number,
         unloader:String,
-        remark: String
+        remark: String,
+        pureWeight:number,
+        deductionKg:number,
+        moistDeduction:number
 }
 
 export interface PurchasePayVo {
