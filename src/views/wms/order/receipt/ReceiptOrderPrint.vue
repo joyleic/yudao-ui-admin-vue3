@@ -6,13 +6,13 @@
       <div class="relative mb-8px">
         <h2 class="text-center">入库单</h2>
         <div v-if="printData.no" class="absolute right-0 top-0">
-          <Barcode
+          <!-- <Barcode
             :content="printData.no"
             :display-value="false"
             :format="BarcodeFormatEnum.CODE39"
             :height="40"
             :width="180"
-          />
+          /> -->
         </div>
       </div>
       <div class="mb-12px grid grid-cols-3 gap-x-24px gap-y-8px text-14px">
@@ -105,8 +105,8 @@ import {
   formatSumQuantity,
   multiplyPrice
 } from '@/views/wms/utils/format'
-import Barcode from '@/views/mes/wm/barcode/components/Barcode.vue'
-import { BarcodeFormatEnum } from '@/views/mes/utils/constants'
+// import Barcode from '@/views/mes/wm/barcode/components/Barcode.vue'
+// import { BarcodeFormatEnum } from '@/views/mes/utils/constants'
 
 /** WMS 入库单打印 */
 defineOptions({ name: 'WmsReceiptOrderPrint' })

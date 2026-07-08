@@ -1,4 +1,4 @@
-<!-- 系统用户选择器：纯下拉，前端过滤（支持 nickname），展示部门 -->
+<!-- 系统角色选择器：纯下拉，前端过滤（支持 name / code） -->
 <template>
   <el-select
     v-model="selectValue"
@@ -13,13 +13,13 @@
     <el-option
       v-for="item in filteredList"
       :key="item.id"
-      :label="item.nickname"
+      :label="item.name"
       :value="item.id"
     >
       <div class="flex items-center gap-8px">
-        <span>{{ item.nickname }}</span>
-        <el-tag v-if="item.deptName" size="small" type="info" class="ml-4px">
-          {{ item.deptName }}
+        <span>{{ item.name }}</span>
+        <el-tag v-if="item.code" size="small" type="info" class="ml-4px">
+          {{ item.code }}
         </el-tag>
       </div>
     </el-option>
@@ -27,9 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import * as UserApi from '@/api/system/user'
+import { getSimpleRoleList, RoleVO } from '@/api/system/role'
 
-defineOptions({ name: 'UserSelect' })
+defineOptions({ name: 'RoleSelect' })
 
 const props = withDefaults(
   defineProps<{
@@ -41,24 +41,24 @@ const props = withDefaults(
   {
     disabled: false,
     clearable: true,
-    placeholder: '请选择用户'
+    placeholder: '请选择角色'
   }
 )
 
 const emit = defineEmits<{
   'update:modelValue': [value: number | undefined]
-  change: [item: UserApi.UserVO | undefined]
+  change: [item: RoleVO | undefined]
 }>()
 
-const allList = ref<UserApi.UserVO[]>([])
-const filteredList = ref<UserApi.UserVO[]>([])
+const allList = ref<RoleVO[]>([])
+const filteredList = ref<RoleVO[]>([])
 
 const selectValue = computed({
   get: () => props.modelValue,
   set: (val) => emit('update:modelValue', val)
 })
 
-/** 前端过滤（nickname + deptName） */
+/** 前端过滤（name + code） */
 const handleFilter = (query: string) => {
   if (!query) {
     filteredList.value = allList.value
@@ -67,8 +67,8 @@ const handleFilter = (query: string) => {
   const keyword = query.toLowerCase()
   filteredList.value = allList.value.filter(
     (item) =>
-      item.nickname?.toLowerCase().includes(keyword) ||
-      (item as any).deptName?.toLowerCase().includes(keyword)
+      item.name?.toLowerCase().includes(keyword) ||
+      item.code?.toLowerCase().includes(keyword)
   )
 }
 
@@ -78,9 +78,9 @@ const handleChange = (val: number | undefined) => {
   emit('change', item)
 }
 
-/** 加载用户列表 */
+/** 加载角色列表 */
 onMounted(async () => {
-  allList.value = await UserApi.getSimpleUserList()
+  allList.value = await getSimpleRoleList()
   filteredList.value = allList.value
 })
 </script>

@@ -1,5 +1,6 @@
 <template>
- 
+  <doc-alert title="系统日志" url="https://doc.iocoder.cn/system-log/" />
+
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
@@ -46,7 +47,7 @@
           plain
           @click="handleExport"
           :loading="exportLoading"
-          v-hasPermi="['infra:login-log:export']"
+          v-hasPermi="['system:login-log:export']"
         >
           <Icon icon="ep:download" class="mr-5px" /> 导出
         </el-button>
@@ -58,7 +59,7 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list">
       <el-table-column label="日志编号" align="center" prop="id" />
-      <el-table-column label="操作类型" align="center" prop="logType">
+      <el-table-column label="登录类型" align="center" prop="logType">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.SYSTEM_LOGIN_TYPE" :value="scope.row.logType" />
         </template>
@@ -84,7 +85,7 @@
             link
             type="primary"
             @click="openDetail(scope.row)"
-            v-hasPermi="['infra:login-log:query']"
+            v-hasPermi="['system:login-log:query']"
           >
             详情
           </el-button>

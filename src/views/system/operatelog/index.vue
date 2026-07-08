@@ -1,4 +1,5 @@
 <template>
+  <doc-alert title="系统日志" url="https://doc.iocoder.cn/system-log/" />
 
   <ContentWrap>
     <!-- 搜索工作栏 -->
@@ -80,7 +81,7 @@
           plain
           @click="handleExport"
           :loading="exportLoading"
-          v-hasPermi="['infra:operate-log:export']"
+          v-hasPermi="['system:operate-log:export']"
         >
           <Icon icon="ep:download" class="mr-5px" /> 导出
         </el-button>
@@ -111,7 +112,7 @@
             link
             type="primary"
             @click="openDetail(scope.row)"
-            v-hasPermi="['infra:operate-log:query']"
+            v-hasPermi="['system:operate-log:query']"
           >
             详情
           </el-button>
